@@ -3,7 +3,6 @@ import os
 import numpy as np
 import insightface
 from insightface.app import FaceAnalysis
-from scipy.datasets import face
 
 app = FaceAnalysis(name = 'buffalo_l')
 app.prepare(ctx_id = 0, det_size = (640, 640))
@@ -31,11 +30,18 @@ print(f"Loaded {len(known_encodings)} faces")
 
 video = cv2.VideoCapture(0)
 
+frame_count = 0
+
 while True:
-    success, frame = cv2.VideoCapture(0).read()
+    success, frame = video.read()
     if not success:
         break
-    faces = app.get(frame)
+
+
+    if frame_count % 3 == 0:#Process every 5th frame to improve performance
+        faces = app.get(frame)
+    frame_count += 1
+
     for face in faces:#Computing for each detected face
         embedding = face.embedding
         name = "Unknown"
